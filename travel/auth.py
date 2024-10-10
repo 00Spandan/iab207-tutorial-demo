@@ -4,6 +4,7 @@ from flask_login import login_user, login_required, logout_user
 from flask_bcrypt import generate_password_hash, check_password_hash
 from .models import User
 from . import db
+from sqlalchemy import or_
 
 authbp = Blueprint('auth', __name__ )
 
@@ -14,7 +15,7 @@ def register():
             uname = register.user_name.data
             pwd = register.password.data
             email = register.email_id.data
-            user = db.session.scalar(db.select(User).where(User.name==uname or User.emailid==email))
+            user = db.session.scalar(db.select(User).where(or_(User.name==uname, User.emailid==email)))
             if user:
                 flash('User already exists, please try another')
                 return redirect(url_for('auth.register'))
